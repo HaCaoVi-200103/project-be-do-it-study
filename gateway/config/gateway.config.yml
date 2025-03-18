@@ -8,19 +8,19 @@ apiEndpoints:
   api:
     host: localhost
     paths: "/ip"
-  user:
+  auth:
     host: localhost
-    paths: ["/users", "/users/*"]
-  music:
+    paths: ["/auth", "/auth/*"]
+  mail:
     host: localhost
-    paths: ["/musics", "/musics/*"]
+    paths: ["/mail", "/mail/*"]
 
 serviceEndpoints:
   httpbin:
     url: "https://httpbin.org"
-  userService:
+  authService:
     url: "http://localhost:3000"
-  musicService:
+  mailService:
     url: "http://localhost:8000"
 
 policies:
@@ -46,25 +46,25 @@ pipelines:
               message: "Incoming request: {method} {url}"
       - proxy:
           - action:
-              serviceEndpoint: userService
+              serviceEndpoint: authService
       - proxy:
           - action:
-              serviceEndpoint: musicService
+              serviceEndpoint: mailService
 
-  userPipeline:
+  authPipeline:
     apiEndpoints:
-      - user
+      - auth
     policies:
       - proxy:
           - action:
-              serviceEndpoint: userService
+              serviceEndpoint: authService
               changeOrigin: true
 
-  musicPipeline:
+  mailPipeline:
     apiEndpoints:
-      - music
+      - mail
     policies:
       - proxy:
           - action:
-              serviceEndpoint: musicService
+              serviceEndpoint: mailService
               changeOrigin: true

@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev:user": "nodemon ./src/services/user-service/app.ts",
-    "dev:music": "nodemon ./src/services/music-service/app.ts",
+    "dev:auth": "nodemon ./src/services/auth-service/auth.service.ts",
+    "dev:mail": "nodemon ./src/services/mail-service/mail.service.ts",
     "build": "tsc"
   },
   "dependencies": {
