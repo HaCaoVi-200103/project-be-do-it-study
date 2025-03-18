@@ -1,0 +1,70 @@
+http:
+  port: 8080
+admin:
+  port: 9876
+  host: localhost
+
+apiEndpoints:
+  api:
+    host: localhost
+    paths: "/ip"
+  user:
+    host: localhost
+    paths: ["/users", "/users/*"]
+  music:
+    host: localhost
+    paths: ["/musics", "/musics/*"]
+
+serviceEndpoints:
+  httpbin:
+    url: "https://httpbin.org"
+  userService:
+    url: "http://localhost:3000"
+  musicService:
+    url: "http://localhost:8000"
+
+policies:
+  - cors
+  - log
+  - proxy
+  - rate-limit
+
+pipelines:
+  default:
+    apiEndpoints:
+      - api
+    policies:
+      - cors:
+          - action:
+              origin: "${ORIGIN_FE_URL}"
+              methods: ["GET", "POST", "DELETE", "PUT", "PATCH"]
+              credentials: true
+              allowedHeaders:
+                ["Authorization", "Content-Type", "X-Requested-With"]
+      - log:
+          - action:
+              message: "Incoming request: {method} {url}"
+      - proxy:
+          - action:
+              serviceEndpoint: userService
+      - proxy:
+          - action:
+              serviceEndpoint: musicService
+
+  userPipeline:
+    apiEndpoints:
+      - user
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: userService
+              changeOrigin: true
+
+  musicPipeline:
+    apiEndpoints:
+      - music
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: musicService
+              changeOrigin: true
